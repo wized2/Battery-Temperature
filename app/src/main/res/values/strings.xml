@@ -1,7 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Battery Temperature</string>
-    <string name="temp_placeholder">Battery Temp: -- °C</string>
+    <string name="temp_placeholder">Battery Temp: —</string>
+    <string name="temp_format">Battery Temp: %1$s °C  (%2$s °F)</string>
+    <string name="temp_unavailable">Battery Temp: unavailable</string>
     <string name="refresh">Refresh</string>
     <string name="battery_icon_desc">Battery Icon</string>
+    <string name="status_unknown">Status: unknown</string>
+    <string name="status_normal">Status: Normal</string>
+    <string name="status_warm">Status: Warm</string>
+    <string name="status_hot">Status: Hot — cool the device</string>
+    <string name="status_cold">Status: Cold</string>
+    <string name="details_format">Level: %1$s\nVoltage: %2$s\nPower: %3$s</string>
+    <string name="charge_none">Not charging</string>
+    <string name="charge_usb">Charging (USB)</string>
+    <string name="charge_ac">Charging (AC)</string>
+    <string name="charge_wireless">Charging (wireless)</string>
 </resources>

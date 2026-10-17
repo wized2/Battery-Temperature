@@ -2,7 +2,7 @@ name: Build & Release
 
 on:
   push:
-    branches: [main]
+    branches: [main, historical]
     tags: ['v*']
     paths-ignore:
       - '**.md'
