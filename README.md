@@ -1,5 +1,8 @@
 # Battery Temperature
 
+[![Build & Release](https://github.com/wized2/Battery-Temperature/actions/workflows/build.yml/badge.svg)](https://github.com/wized2/Battery-Temperature/actions/workflows/build.yml)
+
+
 My **first Android app** (early 2024), built with help from an early ChatGPT.
 
 It shows the phone’s **battery temperature** in °C using the sticky `ACTION_BATTERY_CHANGED` broadcast, with a simple refresh button.
