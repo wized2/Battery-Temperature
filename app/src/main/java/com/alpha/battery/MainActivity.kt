@@ -55,9 +55,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showBatteryTemp() {
-        val batteryStatus: Intent? = IntentFilter(Intent.ACTION_BATTERY_CHANGED).let { filter ->
-            registerReceiver(null, filter)
-        } ?: return
+        val batteryStatus = registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
+        if (batteryStatus == null) {
+            tempTextView.text = getString(R.string.temp_unavailable)
+            statusTextView.text = getString(R.string.status_unknown)
+            detailsTextView.text = ""
+            return
+        }
 
         // Android reports temperature in tenths of a degree Celsius
         val tempTenths = batteryStatus.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, Int.MIN_VALUE)
