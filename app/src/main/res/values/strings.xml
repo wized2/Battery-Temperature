@@ -1,30 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Battery Temperature</string>
-    <string name="subtitle">Live battery thermal reading</string>
-    <string name="temp_placeholder">—°</string>
-    <string name="temp_secondary_placeholder">—</string>
-    <string name="temp_unavailable">—°</string>
-    <string name="refresh">Refresh</string>
+    <string name="temp_placeholder">—</string>
     <string name="unit_c">°C</string>
     <string name="unit_f">°F</string>
+    <string name="refresh">Refresh</string>
+    <string name="battery_icon_desc">Battery</string>
     <string name="status_unknown">Unknown</string>
     <string name="status_normal">Normal</string>
     <string name="status_warm">Warm</string>
     <string name="status_hot">Hot — cool the device</string>
     <string name="status_cold">Cold</string>
-    <string name="details_title">Battery details</string>
-    <string name="details_placeholder">Level: —\nVoltage: —\nPower: —\nHealth: —</string>
-    <string name="details_format">Level: %1$s\nVoltage: %2$s\nPower: %3$s\nHealth: %4$s</string>
+    <string name="label_level">Level</string>
+    <string name="label_voltage">Voltage</string>
+    <string name="label_power">Power</string>
+    <string name="label_health">Health</string>
     <string name="charge_none">Not charging</string>
-    <string name="charge_usb">Charging (USB)</string>
-    <string name="charge_ac">Charging (AC)</string>
-    <string name="charge_wireless">Charging (wireless)</string>
+    <string name="charge_usb">USB</string>
+    <string name="charge_ac">AC</string>
+    <string name="charge_wireless">Wireless</string>
     <string name="health_good">Good</string>
     <string name="health_overheat">Overheat</string>
     <string name="health_dead">Dead</string>
     <string name="health_over_voltage">Over voltage</string>
-    <string name="health_failure">Unspecified failure</string>
+    <string name="health_failure">Failure</string>
     <string name="health_cold">Cold</string>
     <string name="health_unknown">Unknown</string>
+    <string name="subtitle">Live battery thermal readout</string>
+    <string name="toggle_unit">Toggle °C / °F</string>
 </resources>

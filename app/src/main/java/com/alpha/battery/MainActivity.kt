@@ -2,6 +2,7 @@ package com.alpha.battery
 
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.drawable.GradientDrawable
 import android.os.BatteryManager
 import android.os.Bundle
 import android.os.Handler
@@ -11,24 +12,23 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.button.MaterialButtonToggleGroup
-import com.google.android.material.card.MaterialCardView
-import com.google.android.material.chip.Chip
 import java.util.Locale
 import kotlin.math.roundToInt
 
 /**
- * Battery Temperature — live battery thermal + power details.
- * Original app (2024); reconstructed and improved as FOSS.
+ * Battery Temperature — live thermal readout from ACTION_BATTERY_CHANGED.
  */
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var tempTextView: TextView
-    private lateinit var tempSecondaryView: TextView
-    private lateinit var statusChip: Chip
-    private lateinit var detailsTextView: TextView
-    private lateinit var refreshButton: MaterialButton
+    private lateinit var tempValue: TextView
+    private lateinit var secondaryTemp: TextView
+    private lateinit var statusChip: TextView
+    private lateinit var levelValue: TextView
+    private lateinit var voltageValue: TextView
+    private lateinit var powerValue: TextView
+    private lateinit var healthValue: TextView
     private lateinit var unitToggle: MaterialButtonToggleGroup
-    private lateinit var tempCard: MaterialCardView
+    private lateinit var refreshButton: MaterialButton
 
     private var useCelsius = true
     private var lastTempC: Double? = null
@@ -45,19 +45,21 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        tempTextView = findViewById(R.id.tempTextView)
-        tempSecondaryView = findViewById(R.id.tempSecondaryView)
+        tempValue = findViewById(R.id.tempValue)
+        secondaryTemp = findViewById(R.id.secondaryTemp)
         statusChip = findViewById(R.id.statusChip)
-        detailsTextView = findViewById(R.id.detailsTextView)
-        refreshButton = findViewById(R.id.refreshButton)
+        levelValue = findViewById(R.id.levelValue)
+        voltageValue = findViewById(R.id.voltageValue)
+        powerValue = findViewById(R.id.powerValue)
+        healthValue = findViewById(R.id.healthValue)
         unitToggle = findViewById(R.id.unitToggle)
-        tempCard = findViewById(R.id.tempCard)
+        refreshButton = findViewById(R.id.refreshButton)
 
         unitToggle.check(R.id.unitC)
         unitToggle.addOnButtonCheckedListener { _, checkedId, isChecked ->
             if (!isChecked) return@addOnButtonCheckedListener
             useCelsius = checkedId == R.id.unitC
-            renderTemperature()
+            renderTemp()
         }
 
         refreshButton.setOnClickListener { showBatteryTemp() }
@@ -77,39 +79,42 @@ class MainActivity : AppCompatActivity() {
     private fun showBatteryTemp() {
         val batteryStatus = registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
         if (batteryStatus == null) {
-            lastTempC = null
-            tempTextView.text = getString(R.string.temp_unavailable)
-            tempSecondaryView.text = getString(R.string.status_unknown)
+            tempValue.text = getString(R.string.temp_placeholder)
             statusChip.text = getString(R.string.status_unknown)
-            detailsTextView.text = getString(R.string.details_placeholder)
+            secondaryTemp.text = ""
             return
         }
 
         val tempTenths = batteryStatus.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, Int.MIN_VALUE)
         if (tempTenths == Int.MIN_VALUE) {
-            lastTempC = null
-            tempTextView.text = getString(R.string.temp_unavailable)
+            tempValue.text = getString(R.string.temp_placeholder)
             statusChip.text = getString(R.string.status_unknown)
-            return
+            secondaryTemp.text = ""
+            lastTempC = null
+        } else {
+            lastTempC = tempTenths / 10.0
+            renderTemp()
         }
-
-        lastTempC = tempTenths / 10.0
-        renderTemperature()
 
         val level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
         val scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, 100).coerceAtLeast(1)
         val pct = if (level >= 0) (level * 100f / scale).roundToInt() else -1
-        val voltageMv = batteryStatus.getIntExtra(BatteryManager.EXTRA_VOLTAGE, -1)
-        val plugged = batteryStatus.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0)
-        val health = batteryStatus.getIntExtra(BatteryManager.EXTRA_HEALTH, BatteryManager.BATTERY_HEALTH_UNKNOWN)
+        levelValue.text = if (pct >= 0) "$pct%" else "—"
 
-        val charging = when (plugged) {
+        val voltageMv = batteryStatus.getIntExtra(BatteryManager.EXTRA_VOLTAGE, -1)
+        voltageValue.text =
+            if (voltageMv > 0) String.format(Locale.US, "%.2f V", voltageMv / 1000.0) else "—"
+
+        val plugged = batteryStatus.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0)
+        powerValue.text = when (plugged) {
             BatteryManager.BATTERY_PLUGGED_USB -> getString(R.string.charge_usb)
             BatteryManager.BATTERY_PLUGGED_AC -> getString(R.string.charge_ac)
             BatteryManager.BATTERY_PLUGGED_WIRELESS -> getString(R.string.charge_wireless)
             else -> getString(R.string.charge_none)
         }
-        val healthText = when (health) {
+
+        val health = batteryStatus.getIntExtra(BatteryManager.EXTRA_HEALTH, BatteryManager.BATTERY_HEALTH_UNKNOWN)
+        healthValue.text = when (health) {
             BatteryManager.BATTERY_HEALTH_GOOD -> getString(R.string.health_good)
             BatteryManager.BATTERY_HEALTH_OVERHEAT -> getString(R.string.health_overheat)
             BatteryManager.BATTERY_HEALTH_DEAD -> getString(R.string.health_dead)
@@ -118,40 +123,33 @@ class MainActivity : AppCompatActivity() {
             BatteryManager.BATTERY_HEALTH_COLD -> getString(R.string.health_cold)
             else -> getString(R.string.health_unknown)
         }
-        val levelText = if (pct >= 0) "$pct%" else "—"
-        val voltText = if (voltageMv > 0) {
-            String.format(Locale.US, "%.2f V", voltageMv / 1000.0)
-        } else {
-            "—"
-        }
-        detailsTextView.text = getString(R.string.details_format, levelText, voltText, charging, healthText)
     }
 
-    private fun renderTemperature() {
-        val tempC = lastTempC
-        if (tempC == null) {
-            tempTextView.text = getString(R.string.temp_unavailable)
-            return
-        }
+    private fun renderTemp() {
+        val tempC = lastTempC ?: return
         val tempF = tempC * 9.0 / 5.0 + 32.0
-        val primary = if (useCelsius) tempC else tempF
-        val secondary = if (useCelsius) tempF else tempC
-        val primaryUnit = if (useCelsius) "°C" else "°F"
-        val secondaryUnit = if (useCelsius) "°F" else "°C"
+        if (useCelsius) {
+            tempValue.text = String.format(Locale.US, "%.1f°", tempC)
+            secondaryTemp.text = String.format(Locale.US, "%.1f °F", tempF)
+        } else {
+            tempValue.text = String.format(Locale.US, "%.1f°", tempF)
+            secondaryTemp.text = String.format(Locale.US, "%.1f °C", tempC)
+        }
 
-        tempTextView.text = String.format(Locale.US, "%.1f%s", primary, primaryUnit)
-        tempSecondaryView.text = String.format(Locale.US, "%.1f%s", secondary, secondaryUnit)
-
-        val (statusRes, bgRes, fgRes) = when {
-            tempC >= 45.0 -> Triple(R.string.status_hot, R.color.status_hot_bg, R.color.status_hot_fg)
-            tempC >= 38.0 -> Triple(R.string.status_warm, R.color.status_warm_bg, R.color.status_warm_fg)
-            tempC <= 0.0 -> Triple(R.string.status_cold, R.color.status_cold_bg, R.color.status_cold_fg)
-            else -> Triple(R.string.status_normal, R.color.status_normal_bg, R.color.status_normal_fg)
+        val (statusRes, colorRes) = when {
+            tempC >= 45.0 -> R.string.status_hot to R.color.status_hot
+            tempC >= 38.0 -> R.string.status_warm to R.color.status_warm
+            tempC <= 5.0 -> R.string.status_cold to R.color.status_cold
+            else -> R.string.status_normal to R.color.status_normal
         }
         statusChip.text = getString(statusRes)
-        statusChip.chipBackgroundColor =
-            android.content.res.ColorStateList.valueOf(ContextCompat.getColor(this, bgRes))
-        statusChip.setTextColor(ContextCompat.getColor(this, fgRes))
+        val color = ContextCompat.getColor(this, colorRes)
+        statusChip.setTextColor(ContextCompat.getColor(this, R.color.surface))
+        val bg = GradientDrawable().apply {
+            cornerRadius = 48f
+            setColor(color)
+        }
+        statusChip.background = bg
     }
 
     companion object {

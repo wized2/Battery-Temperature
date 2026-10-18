@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="md_theme_primary">#006A60</color>
-    <color name="md_theme_on_primary">#FFFFFF</color>
-    <color name="status_normal_bg">#E8F5E9</color>
-    <color name="status_warm_bg">#FFF8E1</color>
-    <color name="status_hot_bg">#FFEBEE</color>
-    <color name="status_cold_bg">#E1F5FE</color>
-    <color name="status_normal_fg">#1B5E20</color>
-    <color name="status_warm_fg">#E65100</color>
-    <color name="status_hot_fg">#B71C1C</color>
-    <color name="status_cold_fg">#01579B</color>
+    <color name="primary">#00897B</color>
+    <color name="on_primary">#FFFFFF</color>
+    <color name="secondary">#26A69A</color>
+    <color name="surface">#0F1414</color>
+    <color name="surface_card">#1A2222</color>
+    <color name="text_primary">#E8F5F3</color>
+    <color name="text_muted">#9BB5B1</color>
+    <color name="status_normal">#66BB6A</color>
+    <color name="status_warm">#FFB74D</color>
+    <color name="status_hot">#EF5350</color>
+    <color name="status_cold">#4FC3F7</color>
 </resources>
