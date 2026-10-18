@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="md_theme_primary">#006A60</color>
+    <color name="md_theme_on_primary">#FFFFFF</color>
+    <color name="status_normal_bg">#E8F5E9</color>
+    <color name="status_warm_bg">#FFF8E1</color>
+    <color name="status_hot_bg">#FFEBEE</color>
+    <color name="status_cold_bg">#E1F5FE</color>
+    <color name="status_normal_fg">#1B5E20</color>
+    <color name="status_warm_fg">#E65100</color>
+    <color name="status_hot_fg">#B71C1C</color>
+    <color name="status_cold_fg">#01579B</color>
 </resources>
